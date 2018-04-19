@@ -4,29 +4,56 @@ import sys
 import os.path
 from pprint import pprint
 
+def extractSetting(s, name):
+    s = s.replace(' = ', '')
+    s = s.replace('=', '')
+    s = s.replace(name, '').strip()
+    return s;
+
 def xyzFromFile(filename):
     content = []
     with open(filename, 'r') as f:
         content = f.readlines()
         f.close()
         #for c in content: print(c.strip())
-    content = list(filter(lambda c: not c.strip().startswith('#') and c.strip() != '\n' and len(c.strip()) > 0, content))
+    content = list(filter(lambda c: not c.strip().startswith('//') and c.strip() != '\n' and len(c.strip()) > 0, content))
 
-    for c in content: print(c.strip())
-    xs = content[0]
-    ys = content[1]
-    #import pdb; pdb.set_trace()
-    if len(content) > 2:
-        zs = content[2]
-        z = [int(n) for n in zs.split()]
-    else: z = [-1, 1]
+    xs, ys, zs = None, None, None
 
-    #print(z)
+    for c in content:
+        print(c.strip())
+        if c.lower().startswith('x'):
+            xs = extractSetting(c, 'x')
+            #content.remove(c)
+        elif c.lower().startswith('y'):
+            ys = extractSetting(c, 'y')
+            #content.remove(c)
+        elif c.lower().startswith('z'):
+            zs = extractSetting(c, 'z')
+            #content.remove(c)
+
+    if xs == None or ys == None:
+        raise Exception('X or Y lines is missing.')
+
+    # xs = content[0]
+    # ys = content[1]
+    # #import pdb; pdb.set_trace()
+    # if len(content) > 2:
+    #     zs = content[2]
+    #     z = [int(n) for n in zs.split()]
+    # else: z = [-1, 1]
 
     x = [int(n) for n in xs.split()]
     y = [int(n) for n in ys.split()]
-    
-    return x, y, z
+
+    if zs == None:
+        z = [-1, 1]
+    else: z = [int(n) for n in zs.split()]
+
+    print(x)
+    print(y)
+    print(z)
+    return x, y, z, content
 
 def arraySum(array, delta):
     array[:] = [x + delta for x in array]

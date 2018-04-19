@@ -65,8 +65,8 @@ def getSetting(strings, name):
     for s in strings:
         s = s.strip().lower()
         if s.strip().lower().startswith(name):
-            s = s.replace('=', '')
             s = s.replace(' = ', '')
+            s = s.replace('=', '')
             s = s.replace(name, '').strip()
             #print(s)
             return s

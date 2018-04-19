@@ -2,6 +2,7 @@ from Tkinter import * # python 2
 import Tkinter, Tkconstants, tkFileDialog
 import ttk
 import myutil as myutil
+import myutilwrite as myutilwrite
 import os
 from face import Face
 from block import Block
@@ -89,79 +90,8 @@ def btnFaceClicked():
             printError('')
             printTemp()
 
-def writeBlockMeshDict(temp=False):
-    if temp:
-        filename = '.temp'
-    else: filename = 'blockMeshDict'
-    with open(filename, 'w+') as file:
-        writeInit(file)
-        writePoints(file)
-        writeEdges(file)
-        writeFaces(file)
-        writeBlocks(file)
-        writePatchPairs(file)
-
-def writeInit(file):
-    s = """FoamFile
-{
-    version     2.0;
-    format      ascii;
-    class       dictionary;
-    object      blockMeshDict;
-}
-
-// * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
-// Created by Andreee94
-// -------> 2D Foam GUI
-// * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
-
-convertToMeters 1;
-"""
-    file.write(s + '\n\n')
-
-def writePoints(file):
-    file.write('vertices' + '\n')
-    file.write('(' + '\n')
-    file.write('   #Front points' + '\n')
-    for i in range(0, len(x)):
-        file.write('   (')
-        file.write(str(x[i]) + '   ')
-        file.write(str(y[i]) + '   ')
-        file.write(str(z[0]))
-        file.write(')' + ' ' + '#' + str(i) + '\n')
-
-    file.write('   #Back points' + '\n')
-    for i in range(0, len(x)):
-        file.write('   (')
-        file.write(str(x[i]) + '   ')
-        file.write(str(y[i]) + '   ')
-        file.write(str(z[1]))
-        file.write(')' + ' ' + '#' + str(len(x) + i) + '\n')
-
-    file.write(');\n\n')
-
-def writeBlocks(file):
-    file.write('blocks\n(\n')
-    file.write(Block.printBlocks(blocks, len(x), x, y, z, cellsize))
-    file.write(');\n\n')
-
-def writeEdges(file):
-    file.write('edges\n(\n')
-    file.write(');\n\n')
-
-def writeFaces(file):
-    file.write('boundary\n(\n')
-    for f in faces:
-        file.write(Face.printFaces(faces[f], len(x)))
-        file.write('\n\n')
-    file.write(');\n\n')
-
-def writePatchPairs(file):
-    file.write('mergePatchPairs\n(\n')
-    file.write(');\n\n')
-
 def btnSaveClicked():
-    writeBlockMeshDict()
+    myutilwrite.writeBlockMeshDict(x, y, z, faces, blocks, cellsize)
 
 def btnLoadClicked():
     global x,y,z
@@ -175,7 +105,7 @@ def btnLoadClicked():
         Button(window, text="Save", command=btnSaveClicked).grid(column=4, row=levelRowSave, columnspan=2, rowspan=2)  #save button
         updateGridsize()
         # load and plot
-        x, y, z = myutil.xyzFromFile(fileInput)
+        x, y, z, content = myutil.xyzFromFile(fileInput)
         fig, fig_num, ax = myutil.plotPoints(x, y, z)
 
 def addFace(faceName, face):
@@ -205,7 +135,7 @@ def printTemp():
     scrollbar = Scrollbar(windowTemp)
     scrollbar.pack(side=RIGHT, fill=Y)
     text = Text(windowTemp, wrap=WORD, yscrollcommand=scrollbar.set)#, state="disabled")
-    writeBlockMeshDict(temp=True)
+    myutilwrite.writeBlockMeshDict(x, y, z, faces, blocks, cellsize, temp=True)
     with open('.temp', 'r') as myfile:
         t = myfile.read()
     try: text.delete(0, END)
