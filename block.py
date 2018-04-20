@@ -51,7 +51,7 @@ class Block(object):
             # x_cells = abs(int(math.ceil((x[f.points[0]] - x[f.points[1]]) / cellsize)))
             # y_cells = abs(int(math.ceil((y[f.points[1]] - y[f.points[2]]) / cellsize)))
             # z_cells = 1
-            print(f.points)
+            #print(f.points)
             string += '     hex (' + str(f.points[0]) + '  ' + str(f.points[1]) + '  ' + str(f.points[2]) + '  ' + str(f.points[3]) + '  '
             string += str(f.points[0]+numPoints) + '  ' + str(f.points[1]+numPoints) + '  ' + str(f.points[2]+numPoints) + '  ' + str(f.points[3]+numPoints) + ')'
             string += '    ' + f.zonename + ' (' + (str(x_cells) + '  ' + str(y_cells) + '  ' + str(z_cells) + ')' )

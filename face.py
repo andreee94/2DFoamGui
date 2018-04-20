@@ -42,7 +42,7 @@ class Face(object):
         string += '        faces\n'
         string += '        (\n'
         for f in faces:
-            print(f.points)
+            #print(f.points)
             if len(f.points) == 2:
                 string += '            (' + str(f.points[0]) + '    ' + str(f.points[1]) + '    ' + str(f.points[1]+numPoints) + '    ' + str(f.points[0]+numPoints)  + ')\n'
             elif len(f.points) == 4:

@@ -4,6 +4,13 @@ import sys
 import os.path
 from pprint import pprint
 
+zorder_bg = 5
+zorder_lines = 10
+zorder_blocks = 50
+zorder_faces = 55
+zorder_numbers = 100
+
+
 def extractSetting(s, name):
     s = s.replace(' = ', '')
     s = s.replace('=', '')
@@ -50,16 +57,16 @@ def xyzFromFile(filename):
         z = [-1, 1]
     else: z = [int(n) for n in zs.split()]
 
-    print(x)
-    print(y)
-    print(z)
+    #print(x)
+    #print(y)
+    #print(z)
     return x, y, z, content
 
 def arraySum(array, delta):
     array[:] = [x + delta for x in array]
     return array
 
-def plotPoints(x, y, z, savefig=False, outputFile='output'):
+def plotPoints(x, y, z, savefig=False, outputFile='output', block=False):
     fig = plt.figure()
     #ax = fig.gca(projection='3D')
     ax = fig.add_subplot(111)
@@ -67,7 +74,7 @@ def plotPoints(x, y, z, savefig=False, outputFile='output'):
     x.append(x[0])
     y.append(y[0])
     plt.figure(1)
-    line = plt.plot(x, y, z[1], zorder = 10)
+    line = plt.plot(x, y, z[1], zorder=zorder_lines)
     color = line[0].get_c()
     #print(color)
 
@@ -88,17 +95,17 @@ def plotPoints(x, y, z, savefig=False, outputFile='output'):
     fig = plt.figure(1)
     xback = arraySum(x, -delta)
     yback = arraySum(y, delta)
-    plt.plot(xback, yback, color = color, zorder = 5)
-    plt.fill(xback, yback, color = color, alpha = 0.6 , zorder = 5)
+    plt.plot(xback, yback, color = color, zorder=zorder_bg)
+    plt.fill(xback, yback, color = color, alpha = 0.6 , zorder=zorder_bg)
 
     for i in range(0, len(x) - 1):
-        ax.annotate(str(i), xy = (xback[i] + tr, yback[i] + tr))
+        ax.annotate(str(i), xy = (xback[i] + tr, yback[i] + tr), zorder=zorder_numbers)
 
     #plt.plot(arraySum(x, -delta), arraySum(y, delta), color = color, zorder = 5)
     
     if savefig:
         fig.savefig(outputFile + '.png')
-    plt.show(block=False)
+    plt.show(block=block)
     return  fig, 1, ax
 
 def plotFacesAndBlocks(fig, fig_num,  ax, x, y, z, faces, blocks):
@@ -108,7 +115,7 @@ def plotFacesAndBlocks(fig, fig_num,  ax, x, y, z, faces, blocks):
             if len(ff.points) == 2:
                 xx = [x[i] for i in ff.points]
                 yy = [y[i] for i in ff.points]
-                ax.plot(xx, yy, color='r', zorder=100)
+                ax.plot(xx, yy, color='r', zorder=zorder_faces)
                 plt.draw()
                 #ax.show()
 
@@ -116,7 +123,7 @@ def plotFacesAndBlocks(fig, fig_num,  ax, x, y, z, faces, blocks):
         if len(b.points) == 4:
             xx = [x[i] for i in b.points]
             yy = [y[i] for i in b.points]
-            ax.fill(xx, yy, color='g', alpha = 0.6 , zorder = 90)
-            ax.plot(xx, yy, color='g', zorder=91)
+            ax.fill(xx, yy, color='g', alpha = 0.6 , zorder=zorder_blocks)
+            ax.plot(xx, yy, color='g', zorder=zorder_blocks)
             plt.draw()
             #ax.show()
