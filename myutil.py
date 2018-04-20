@@ -50,12 +50,12 @@ def xyzFromFile(filename):
     #     z = [int(n) for n in zs.split()]
     # else: z = [-1, 1]
 
-    x = [int(n) for n in xs.split()]
-    y = [int(n) for n in ys.split()]
+    x = [float(n) for n in xs.split()]
+    y = [float(n) for n in ys.split()]
 
     if zs == None:
         z = [-1, 1]
-    else: z = [int(n) for n in zs.split()]
+    else: z = [float(n) for n in zs.split()]
 
     #print(x)
     #print(y)
