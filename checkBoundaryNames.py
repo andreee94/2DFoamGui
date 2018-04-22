@@ -33,7 +33,7 @@ files = ['0/k',
          '0/omega',
          '0/p',
          '0/U',
-         '0/Ux,'
+         '0/Ux,',
          '0/Uy',
          '0/Uz',
          '0/nuTilda',
@@ -50,23 +50,30 @@ for f in files:
     print('Checking file: ' + f + '...')
     bdNames = getBoundaryNames(f)
     if bdNames == None:
-        print('File: ' + f + 'doens\'t exist')
+        print('    File ' + f + ' doens\'t exist')
     elif bdNames == 0:
-        print('File: ' + f + 'doens\'t contain boundary field')
+        print('    File ' + f + ' doens\'t contain boundary field')
     else:
         boundaries[f] = bdNames
         isEqualToBlockMeshDict = compareArrays(bdNames, bmd_boundaries)
         if isEqualToBlockMeshDict:
-            print('OK ----> Same fields as BlockMesh dict.')
+            print('    OK ----> Same fields as BlockMesh dict.')
         else:
-            print('ERROR ---->')
-            counter_bmd = Counter(bmd_boundaries).items()
-            counter_file = Counter(bdNames).items()
+            print('    ERROR ---->')
+            counter_bmd = bmd_boundaries #Counter(bmd_boundaries).items()
+            counter_file = bdNames #Counter(bdNames).items()
+            common = list(set(counter_bmd).intersection(counter_file))
+            counter_bmd = [item for item in counter_bmd if item not in common]
+            counter_file = [item for item in counter_file if item not in common]
             table = []
+            # firstly common items
+            for ii in  range(0, len(common)):
+                table.append(['    ', 'OK', common[ii], common[ii]])
+            # then the difference items
             for ii in range(0, max(len(counter_bmd), len(counter_file))):
-                item1 = counter_bmd[ii][0] if ii<len(counter_bmd) else ''
-                item2 = counter_file[ii][0] if ii<len(counter_file) else ''
-                table.append([item1, item2])
-            print(tabulate(table, headers=['BlockMeshDict', f]))
+                item1 = counter_bmd[ii] if ii<len(counter_bmd) else ''
+                item2 = counter_file[ii] if ii<len(counter_file) else ''
+                table.append(['    ', 'X', item1, item2])
+            print(tabulate(table, headers=['    ', '    ', 'BlockMeshDict', f]))
 
 
